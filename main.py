@@ -29,9 +29,10 @@ app.add_middleware(
 
 # Groq sozlamalari
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+
 GROQ_MODEL = os.getenv(
     "GROQ_MODEL",
-    "llama-3.3-70b-versatile",
+    "openai/gpt-oss-120b",
 )
 
 
