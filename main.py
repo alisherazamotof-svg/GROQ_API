@@ -72,15 +72,17 @@ async def chat(body: ChatRequest):
                 headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
                 json=payload,
             )
-        if response.status_code >= 400:
-            # Do not expose the secret key or full request headers to the client.
-            raise HTTPException(status_code=502, detail=f"Groq API xatoligi (HTTP {response.status_code}). API kalit va model sozlamalarini tekshiring.")
-        data = response.json()
-        reply = data["choices"][0]["message"]["content"].strip()
-        return ChatResponse(reply=reply or "Hozir javob tayyorlay olmadim. Qayta urinib ko'r.")
-    except HTTPException:
-        raise
-    except httpx.TimeoutException:
-        raise HTTPException(status_code=504, detail="AI javobi kechikdi. Qayta urinib ko'r.")
+       
+if response.status_code >= 400:
+    # Kalitni emas, faqat Groq qaytargan xato tafsilotini logga yozamiz.
+    print(
+        f"Groq API error: HTTP {response.status_code}; "
+        f"response: {response.text[:1000]}"
+    )
+    raise HTTPException(
+        status_code=502,
+        detail=f"Groq API xatoligi (HTTP {response.status_code}). "
+               "Batafsil ma'lumot server logida."
+    )=504, detail="AI javobi kechikdi. Qayta urinib ko'r.")
     except (httpx.HTTPError, KeyError, IndexError, ValueError):
         raise HTTPException(status_code=502, detail="AI xizmatiga ulanishda xatolik yuz berdi.")
